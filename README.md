@@ -36,6 +36,7 @@ $instanceId = (New-Object System.Net.WebClient).DownloadString("http://169.254.1
 Reference Links:
 
 [1]Scale-in Protection : https://aws.amazon.com/blogs/aws/new-instance-protection-for-auto-scaling/ 
+
 [2]set-instance-protection: https://docs.aws.amazon.com/cli/latest/reference/autoscaling/set-instance-protection.html
 
 
