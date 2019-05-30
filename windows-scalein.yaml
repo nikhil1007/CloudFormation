@@ -1,0 +1,76 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  To make sure the instances launched from Autoscaling are protected from
+  Scale-in
+Parameters:
+  ami:
+    Type: String
+    Description: >-
+      Enter a valid ami id keeping in mind the region this CFN template is being
+      launched.
+  InstanceType:
+    Type: String
+    Description: >-
+      Enter valid instance Type depending on your resource requirement. Default
+      is t2.micro.
+  keypair:
+    Type: 'AWS::EC2::KeyPair::KeyName'
+    Description: Choose a valid keypair
+  SecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup::Id'
+    Description: Choose a security group to associate with launchconfiguration. Make sure the security group and subnets belong to same VPC
+  Subnets:
+    Type: List<AWS::EC2::Subnet::Id>
+    Description: >-
+      Subnets in which EC2 instances can be launched. Make sure the security group and subnets belong to same VPC
+  AutoScalingGroup:
+    Type: String
+    Description: Name of your AutoScaling Group
+  IAMrole:
+    Type: String
+    Description: >-
+      Enter a role to which an instance profile will be attached to give instances required perms to execute commands
+Resources:
+  InstanceProfile:
+    Type: 'AWS::IAM::InstanceProfile'
+    Properties:
+      Path: /
+      Roles:
+        - !Ref IAMrole
+  AutoScalingGrp:
+    Type: 'AWS::AutoScaling::AutoScalingGroup'
+    Properties:
+      AutoScalingGroupName: !Ref AutoScalingGroup
+      VPCZoneIdentifier: !Ref Subnets
+      LaunchConfigurationName: !Ref launchConfig
+      MaxSize: '3'
+      MinSize: '2'
+  launchConfig:
+    Type: 'AWS::AutoScaling::LaunchConfiguration'
+    Properties:
+      IamInstanceProfile: !Ref InstanceProfile
+      ImageId: !Ref ami
+      InstanceType: !Ref InstanceType
+      KeyName: !Ref keypair
+      SecurityGroups:
+        - !Ref SecurityGroup
+      UserData:
+        Fn::Base64: !Sub |
+          <powershell>
+          iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))
+          choco install python -y
+          choco install awscli -y
+          $ChocoProfileValue = @'
+          $ChocolateyProfile = "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
+          if (Test-Path($ChocolateyProfile)) {
+            Import-Module "$ChocolateyProfile"
+          }
+          '@
+          Set-Content -Path "$profile" -Value $ChocoProfileValue -Force
+          . $profile
+          refreshenv
+          Start-Sleep -Seconds 15
+          $instanceId = (New-Object System.Net.WebClient).DownloadString("http://169.254.169.254/latest/meta-data/instance-id”)
+          aws autoscaling set-instance-protection --instance-ids $instanceID --auto-scaling-group-name ${AutoScalingGroup} --region ${AWS::Region} --protected-from-scale-in
+          </powershell>
+          <persist>true</persist>
