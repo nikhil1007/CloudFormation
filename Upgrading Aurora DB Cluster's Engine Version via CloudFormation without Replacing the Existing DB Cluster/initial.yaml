@@ -1,0 +1,40 @@
+AWSTemplateFormatVersion: 2010-09-09
+Resources:
+  DBClusterPG:
+    Type: 'AWS::RDS::DBClusterParameterGroup'
+    Properties:
+      Description: test
+      Family: aurora-postgresql10
+      Parameters:
+        log_connections: true
+  RDSCluster:
+    Type: 'AWS::RDS::DBCluster'
+    Properties:
+      AvailabilityZones:
+        - us-east-2a
+        - us-east-2b
+      MasterUsername: nikhil
+      MasterUserPassword: password
+      Engine: aurora-postgresql
+      EngineVersion: '10.7'
+      DBClusterParameterGroupName: default.aurora-postgresql10
+      VpcSecurityGroupIds:
+        - sg-00c5e251f1eedf9fc
+      DBSubnetGroupName: default
+    DeletionPolicy: Retain
+  RDSDBInstance1:
+    Type: 'AWS::RDS::DBInstance'
+    Properties:
+      Engine: aurora-postgresql
+      DBClusterIdentifier: !Ref RDSCluster
+      PubliclyAccessible: 'false'
+      DBInstanceClass: db.t3.medium
+    DeletionPolicy: Retain
+  RDSDBInstance2:
+    Type: 'AWS::RDS::DBInstance'
+    Properties:
+      Engine: aurora-postgresql
+      DBClusterIdentifier: !Ref RDSCluster
+      PubliclyAccessible: 'false'
+      DBInstanceClass: db.t3.medium
+    DeletionPolicy: Retain

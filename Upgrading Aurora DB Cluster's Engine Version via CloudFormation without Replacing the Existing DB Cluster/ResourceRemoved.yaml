@@ -1,0 +1,10 @@
+AWSTemplateFormatVersion: 2010-09-09
+Resources:
+  DBClusterPG:
+    Type: 'AWS::RDS::DBClusterParameterGroup'
+    Properties:
+      Description: test
+      Family: aurora-postgresql10
+      Parameters:
+        log_connections: true
+  
