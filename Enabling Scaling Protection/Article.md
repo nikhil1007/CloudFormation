@@ -1,3 +1,5 @@
+# Enabling Scale-in protection for Instances launched by Auto Scaling Group using CloudFormation
+
 Developers do not mind enabling scale-in protection directly from the console after the Autoscaling Group resource has been created. This does not affect the normal stack operations 99% of the times( although this is an out of band change i.e CloudFormation is unaware of this ). In scenarios where the AutoScaling Group resource needs to be replaced ( i.e if you change the AutoScaling group name ) then the instances launched as a part of new AutoScaling Group will not have scale-in protection enabled. Additionally enabling scale-in protection from AWS console or CLI is a manual task and it is good to automate wherever possible to avoid human errors. ( let us assume there was a production architecture being deployed and at the end the developer forgot to enable this option manually can cause a serious loss of data and money in the time to come )
 
 Why do we need Scale-in Protection enabled on the instance ?
