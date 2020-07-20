@@ -78,3 +78,21 @@ The CloudFormation stack fails to delete gracefully because of the following rea
 
 * Before the AutoScaling Group resource is deleted, its min and desired is set to 0. i.e once all the instances launched by the AutoScaling Group is terminated, CloudFormation proceeds to delete the AutoScaling Group resource.
 * Since we have enabled Scale-in protection the instances, it fails to terminate and stack goes into DELETE_FAILED state. We need use the skip-resources feature and proceed to delete the stack. Further navigate to the AutoScaling Group console and proceed to delete the resources.
+
+Reference Links:
+
+[1] https://aws.amazon.com/blogs/aws/new-instance-protection-for-auto-scaling/
+
+[2] https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources.html
+
+[3] https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/autoscaling.html#AutoScaling.Client.terminate_instance_in_auto_scaling_group
+
+[4] https://docs.aws.amazon.com/cli/latest/reference/autoscaling/set-instance-protection.html
+
+[5] https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-instance-termination.html#instance-protection-modify
+
+[6] https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-instance-termination.html#instance-protection
+
+[7] https://github.com/aws-cloudformation/aws-cloudformation-coverage-roadmap/issues/239
+
+[8] https://github.com/aws-cloudformation/aws-cloudformation-coverage-roadmap/issues/239
